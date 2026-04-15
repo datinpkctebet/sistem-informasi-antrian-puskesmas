@@ -273,9 +273,9 @@ function getActionButtons(queue) {
         </button>`;
 
         // Check/Done button (green checkmark)
-        buttons += `<button class="btn btn-success action-btn" onclick="doneQueue(${queue.id})" title="Selesai">
-            <i class="bi bi-check"></i>
-        </button>`;
+        // buttons += `<button class="btn btn-success action-btn" onclick="doneQueue(${queue.id})" title="Selesai">
+        //     <i class="bi bi-check"></i>
+        // </button>`;
     }
     
     if (queue.status === 'calling') {
