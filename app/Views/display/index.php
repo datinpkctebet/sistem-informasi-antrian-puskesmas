@@ -14,7 +14,7 @@
         }
         
         body {
-            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(180deg, #75d159 0%, #75d159 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
             height: 100vh;
@@ -83,11 +83,11 @@
         }
         
         .nurse-station-section .service-card.active {
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            background: linear-gradient(135deg, #1e8a4b 0%, #094120 100%);
         }
         
         .nurse-station-section .service-name {
-            font-size: 1.1rem;
+            font-size: 1.7rem;
         }
         
         .services-section {
@@ -128,7 +128,7 @@
         }
         
         .service-card.active {
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            background: linear-gradient(135deg, #1e8a4b 0%, #094120 100%);
             transform: scale(1.05);
             box-shadow: 0 12px 30px rgba(39, 174, 96, 0.5);
             animation: pulse 1.5s infinite;
@@ -151,7 +151,7 @@
         
         .service-name {
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.7rem;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 15px;
@@ -380,11 +380,11 @@
                 const dimmedClass = (currentActiveCard !== null && !isActive) ? 'dimmed' : '';
                 
                 const cardHtml = `
-                    <div class="service-card ${activeClass} ${dimmedClass}" data-service-code="${kode}">
-                        <div class="service-name">${service.nama_pelayanan.toUpperCase()}</div>
-                        <div class="queue-name">${displayName}</div>
-                        <div class="queue-numbers">
-                            <div class="current-number">${displayNumber}</div>
+                ${service.nama_pelayanan.toLowerCase().includes('lansia') ? `<div class="service-card ${activeClass} ${dimmedClass}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" data-service-code="${kode}">` : `<div class="service-card ${activeClass} ${dimmedClass}" data-service-code="${kode}">`}
+                    <div class="service-name">${service.nama_pelayanan.toUpperCase()}</div>
+                    <div class="queue-name">${displayName}</div>
+                    <div class="queue-numbers">
+                        <div class="current-number">${displayNumber}</div>
                             ${callBadge}
                         </div>
                     </div>
@@ -518,7 +518,11 @@
                     text += numberToIndonesian(numberInt);
                 }
                 
-                text += ' di ' + formatTextForSpeech(pelayanan);
+                if (pelayanan.toLowerCase().includes('nurse station')) {
+                    text += ' di ' + formatTextForSpeech(pelayanan).replace('Nurse', 'Nurs');
+                } else {
+                    text += ' di Ruang ' + formatTextForSpeech(pelayanan);
+                }
                 
                 if (namaPasien && namaPasien.trim() !== '') {
                     text += '. Atas nama ' + formatTextForSpeech(namaPasien);
