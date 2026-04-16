@@ -49,6 +49,9 @@ $routes->get('display', 'DisplayController::index'); // Default lantai 1
 $routes->get('display/(:segment)', 'DisplayController::index/$1'); // Dynamic lantai
 $routes->get('display/data/(:segment)', 'DisplayController::getData/$1'); // Legacy API
 
+// Display Farmasi route (public)
+$routes->get('farmasi/', 'DisplayController::indexFarmasi'); 
+
 // Admin routes
 $routes->group('admin', ['filter' => 'auth', 'filter' => 'role:admin'], function($routes) {
     // Users management

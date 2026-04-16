@@ -38,6 +38,17 @@ class DisplayController extends BaseController
         return view('display/index', $data);
     }
 
+    // Display Farmasi (fixed route)
+    public function indexFarmasi($lantai = 'farmasi')
+    {
+        $data = [
+            'title' => 'Display Farmasi - Lantai ' . $lantai,
+            'lantai' => $lantai
+        ];
+
+        return view('display/index_farmasi', $data);
+    }
+
     // Legacy getData for backward compatibility
     public function getData($lantai)
     {
