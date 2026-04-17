@@ -67,16 +67,38 @@
             height: calc(100vh - 85px);
             overflow-y: auto;
             display: flex;
+            gap: 20px;
+        }
+        
+        .nurse-station-section {
+            flex: 0 0 280px;
+            display: flex;
             flex-direction: column;
             gap: 20px;
         }
         
-        /* NEW: Service group row layout */
-        .service-group {
-            display: flex;
+        .nurse-station-section .service-card {
+            background: linear-gradient(135deg, #4aa171 0%, #186e2b 100%);
+            min-height: 180px;
+        }
+        
+        .nurse-station-section .service-card.active {
+            background: linear-gradient(135deg, #1e8a4b 0%, #094120 100%);
+        }
+        
+        .nurse-station-section .service-name {
+            font-size: 1.7rem;
+        }
+        
+        .services-section {
+            flex: 1;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
-            align-items: stretch;
-            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
         
         .service-card {
@@ -91,14 +113,6 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            flex: 0 0 calc(25% - 15px);
-            min-width: 280px;
-        }
-        
-        /* Nurse station card - wider */
-        .service-card.nurse-station {
-            flex: 0 0 calc(20% - 15px);
-            min-width: 320px;
         }
         
         .service-card::before {
@@ -130,15 +144,6 @@
             filter: grayscale(30%);
         }
         
-        /* LANSIA colored variant */
-        .service-card.lansia {
-            background: linear-gradient(135deg, #667eea 0%, #c1a1e0 100%);
-        }
-        
-        .service-card.lansia.active {
-            background: linear-gradient(135deg, #5568d3 0%, #a87acc 100%);
-        }
-        
         @keyframes pulse {
             0%, 100% { transform: scale(1.05); }
             50% { transform: scale(1.08); }
@@ -146,23 +151,18 @@
         
         .service-name {
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.7rem;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 10px;
-        }
-
-        .service-card.nurse-station .service-name {
-            font-size: 1.3rem;
+            margin-bottom: 15px;
         }
 
         .queue-name {
             color: white;
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 15px;
-            opacity: 0.95;
         }
         
         .queue-numbers {
@@ -173,14 +173,10 @@
         
         .current-number {
             color: white;
-            font-size: 5rem;
+            font-size: 8rem;
             font-weight: bold;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
             line-height: 1;
-        }
-
-        .service-card.nurse-station .current-number {
-            font-size: 6rem;
         }
         
         .waiting-count {
@@ -199,8 +195,6 @@
         .no-data {
             color: rgba(255, 255, 255, 0.6);
             font-size: 2rem;
-            text-align: center;
-            padding: 40px;
         }
         
         /* Scrollbar styling */
@@ -231,16 +225,6 @@
             font-size: 0.8em;
             margin-left: 10px;
         }
-        
-        /* Responsive */
-        @media (max-width: 1600px) {
-            .service-card {
-                flex: 0 0 calc(33.33% - 14px);
-            }
-            .service-card.nurse-station {
-                flex: 0 0 calc(33.33% - 14px);
-            }
-        }
     </style>
 </head>
 <body>
@@ -249,6 +233,7 @@
         <div class="logo-section">
             <img src="<?= base_url('assets/img/logotebetputih.png') ?>" style="width: 200px; height: auto;" alt="Logo Puskesmas">
             <img src="<?= base_url('assets/img/logo-putih.png') ?>" alt="Logo SIAP">
+            <!-- <div class="puskesmas-name">Puskesmas Tebet</div> -->
         </div>
         <div class="clock-display">
             <i class="bi bi-clock"></i>
@@ -257,8 +242,18 @@
     </div>
     
     <!-- Main Content -->
-    <div class="main-container" id="mainContainer">
-        <!-- Will be populated by JavaScript with grouped rows -->
+    <div class="main-container">
+        <!-- Nurse Station Section (Left) -->
+        <div class="nurse-station-section" id="nurseStationSection">
+            <!-- Will be populated by JavaScript -->
+        </div>
+        
+        <!-- Services Section (Right) -->
+        <div class="services-section">
+            <div class="services-grid" id="servicesGrid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
     </div>
     
     <!-- Audio element for notification sound -->
@@ -270,28 +265,23 @@
     <script>
         const BASE_URL = '<?= base_url() ?>';
         const LANTAI = '<?= $lantai ?>';
-        let serviceStates = {}; 
-        let lastWarningTimes = {}; 
-        let lastCallTime = {}; 
+        let serviceStates = {}; // Track state for each service
+        let lastWarningTimes = {}; // Track warning time per service
+        let currentActiveService = null; // Track currently active service
+        let lastCallTime = {}; // Track when each service was last called
 
-        let callQueue = []; 
+        // Speech & Highlight Queue System
+        let callQueue = []; // Combined queue untuk speech + highlight
         let isProcessingQueue = false;
         let currentActiveCard = null;
 
-        // Extract group name from service name
-        function getGroupName(serviceName) {
-            const name = serviceName.toLowerCase();
-            if (name.includes('lansia')) return 'LANSIA';
-            if (name.includes('ptm')) return 'PTM';
-            if (name.includes('dewasa')) return 'DEWASA';
-            return 'LAINNYA';
-        }
-
-        // Render Services with grouped layout
+        // Render Services
         function renderServices(services) {
-            let newCalls = []; 
+            let nurseStationHtml = '';
+            let servicesHtml = '';
+            let newCalls = []; // Track all new calls in this render cycle
             
-            // First pass: Detect new queue calls
+            // First pass: Detect ALL new queue calls
             services.forEach(service => {
                 const kode = service.kode_antrian;
                 const current = service.current_queue;
@@ -305,17 +295,20 @@
                     let isNewCall = false;
                     let callPriority = 0;
                     
+                    // Check warning trigger (highest priority)
                     if (isWarning && isWarning !== lastWarningTimes[kode]) {
                         isNewCall = true;
                         callPriority = 1;
                         lastWarningTimes[kode] = isWarning;
                     }
+                    // Check if queue changed OR recall
                     else if (!oldState.isFirstLoad && 
                             (oldState.queueId !== newQueueId || oldState.callCount !== callCount)) {
                         isNewCall = true;
                         callPriority = 2;
                     }
                     
+                    // Add to new calls array
                     if (isNewCall) {
                         const timestamp = Date.now();
                         newCalls.push({
@@ -328,6 +321,7 @@
                         lastCallTime[kode] = timestamp;
                     }
                     
+                    // Update state
                     serviceStates[kode] = {
                         queueId: newQueueId,
                         callCount: callCount,
@@ -342,7 +336,9 @@
                 }
             });
             
+            // Process new calls if any
             if (newCalls.length > 0) {
+                // Sort by priority then timestamp
                 newCalls.sort((a, b) => {
                     if (a.priority !== b.priority) return a.priority - b.priority;
                     return a.timestamp - b.timestamp;
@@ -350,6 +346,7 @@
                 
                 console.log('🔔 New calls detected:', newCalls.length);
                 
+                // Add to call queue
                 newCalls.forEach(call => {
                     callQueue.push({
                         kode: call.kode,
@@ -360,122 +357,69 @@
                     });
                 });
                 
+                // Start processing if not already processing
                 if (!isProcessingQueue) {
                     processCallQueue();
                 }
             }
             
-            // Group services by category
-            const grouped = {};
-            const groupOrder = ['LANSIA', 'PTM', 'DEWASA', 'LAINNYA'];
-            
-            groupOrder.forEach(group => {
-                grouped[group] = {
-                    nurseStation: null,
-                    services: []
-                };
-            });
-            
+            // Second pass: Render cards
             services.forEach(service => {
-                const group = getGroupName(service.nama_pelayanan);
-                if (!grouped[group]) {
-                    grouped[group] = {
-                        nurseStation: null,
-                        services: []
-                    };
-                }
+                const kode = service.kode_antrian;
+                const current = service.current_queue;
+                const waitingCount = service.waiting_count || 0;
                 
+                const displayNumber = current ? String(current.nomor_antrian).padStart(4, '0') : '-';
+                const displayName = current ? current.nama_pasien : '';
+                const callCount = current ? (current.call_count || 0) : 0;
+                const callBadge = callCount > 1 ? `<span class="recall-badge">Panggilan ke-${callCount}</span>` : '';
+
+                // Determine if this card should be active
+                const isActive = (currentActiveCard === kode);
+                const activeClass = isActive ? 'active' : '';
+                const dimmedClass = (currentActiveCard !== null && !isActive) ? 'dimmed' : '';
+                
+                const cardHtml = `
+                ${service.nama_pelayanan.toLowerCase().includes('lansia') ? `<div class="service-card ${activeClass} ${dimmedClass}" style="background: linear-gradient(135deg, #667eea 0%, #c1a1e0 100%);" data-service-code="${kode}">` : `<div class="service-card ${activeClass} ${dimmedClass}" data-service-code="${kode}">`}
+                
+                    <div class="service-name">${service.nama_pelayanan.toUpperCase()}</div>
+                    <div class="queue-name">${displayName}</div>
+                    <div class="queue-numbers">
+                        <div class="current-number">${displayNumber}</div>
+                            ${callBadge}
+                        </div>
+                    </div>
+                `;
+                
+                // Separate Nurse Station and regular services
                 if (service.nama_pelayanan.toLowerCase().includes('nurse station')) {
-                    grouped[group].nurseStation = service;
+                    nurseStationHtml += cardHtml;
                 } else {
-                    grouped[group].services.push(service);
+                    servicesHtml += cardHtml;
                 }
             });
             
-            // Render grouped layout
-            let html = '';
-            
-            groupOrder.forEach(group => {
-                const groupData = grouped[group];
-                
-                // Skip empty groups
-                if (!groupData.nurseStation && groupData.services.length === 0) {
-                    return;
-                }
-                
-                html += '<div class="service-group">';
-                
-                // Render nurse station if exists
-                if (groupData.nurseStation) {
-                    const card = groupData.nurseStation;
-                    const current = card.current_queue;
-                    const displayNumber = current ? String(current.nomor_antrian).padStart(4, '0') : '-';
-                    const displayName = current ? current.nama_pasien : '';
-                    const callCount = current ? (current.call_count || 0) : 0;
-                    const callBadge = callCount > 1 ? `<span class="recall-badge">Panggilan ke-${callCount}</span>` : '';
-                    const kode = card.kode_antrian;
-                    
-                    const isActive = (currentActiveCard === kode);
-                    const activeClass = isActive ? 'active' : '';
-                    const dimmedClass = (currentActiveCard !== null && !isActive) ? 'dimmed' : '';
-                    const lansiClass = group === 'LANSIA' ? 'lansia' : '';
-                    
-                    html += `
-                    <div class="service-card nurse-station ${activeClass} ${dimmedClass} ${lansiClass}" data-service-code="${kode}">
-                        <div class="service-name">${card.nama_pelayanan.toUpperCase()}</div>
-                        <div class="queue-name">${displayName}</div>
-                        <div class="queue-numbers">
-                            <div class="current-number">${displayNumber}</div>
-                            ${callBadge}
-                        </div>
-                    </div>
-                    `;
-                }
-                
-                // Render related services
-                groupData.services.forEach(card => {
-                    const current = card.current_queue;
-                    const displayNumber = current ? String(current.nomor_antrian).padStart(4, '0') : '-';
-                    const displayName = current ? current.nama_pasien : '';
-                    const callCount = current ? (current.call_count || 0) : 0;
-                    const callBadge = callCount > 1 ? `<span class="recall-badge">Panggilan ke-${callCount}</span>` : '';
-                    const kode = card.kode_antrian;
-                    
-                    const isActive = (currentActiveCard === kode);
-                    const activeClass = isActive ? 'active' : '';
-                    const dimmedClass = (currentActiveCard !== null && !isActive) ? 'dimmed' : '';
-                    const lansiClass = group === 'LANSIA' ? 'lansia' : '';
-                    
-                    html += `
-                    <div class="service-card ${activeClass} ${dimmedClass} ${lansiClass}" data-service-code="${kode}">
-                        <div class="service-name">${card.nama_pelayanan.toUpperCase()}</div>
-                        <div class="queue-name">${displayName}</div>
-                        <div class="queue-numbers">
-                            <div class="current-number">${displayNumber}</div>
-                            ${callBadge}
-                        </div>
-                    </div>
-                    `;
-                });
-                
-                html += '</div>';
-            });
-            
-            if (html === '') {
-                html = '<div class="no-data">Tidak ada layanan</div>';
+            if (nurseStationHtml === '') {
+                nurseStationHtml = '<div class="text-center text-white fs-6 mt-3">Tidak ada Nurse Station</div>';
             }
             
-            $('#mainContainer').html(html);
+            if (servicesHtml === '') {
+                servicesHtml = '<div class="text-center text-white fs-3 mt-5">Tidak ada layanan</div>';
+            }
+            
+            $('#nurseStationSection').html(nurseStationHtml);
+            $('#servicesGrid').html(servicesHtml);
         }
 
-        // Process call queue
+        // NEW: Process call queue sequentially dengan sinkronisasi penuh
         function processCallQueue() {
             if (callQueue.length === 0) {
                 isProcessingQueue = false;
                 console.log('✅ Queue processing complete');
 
+                // Clear highlight after a delay (5 seconds after last call)
                 setTimeout(() => {
-                    if (callQueue.length === 0) {
+                    if (callQueue.length === 0) { // Double check no new calls came in
                         currentActiveCard = null;
                         clearAllHighlights();
                     }
@@ -489,24 +433,31 @@
             console.log('📢 Processing call:', call.pelayanan, call.fullNumber);
             console.log('   Remaining in queue:', callQueue.length);
             
+            // CRITICAL FIX: Set current active card dan update highlight
             currentActiveCard = call.kode;
+            // Step 1: Highlight the card FIRST
             highlightCard(call.kode);
             
+            // Step 2: Then play the speech
+            // Speech akan auto-trigger next call via callback
             speakQueueWithCallback(
                 call.fullNumber,
                 call.pelayanan,
                 call.namaPasien,
                 call.kode,
                 () => {
+                    // Callback dipanggil ketika speech BENAR-BENAR selesai
                     console.log('✓ Speech completed for:', call.pelayanan);
                     
+                    // Small delay before next call untuk breathing room
                     setTimeout(() => {
-                        processCallQueue();
-                    }, 800);
+                        processCallQueue(); // Process next in queue
+                    }, 800); // 800ms gap between calls
                 }
             );
         }
 
+        // NEW: Highlight specific card
         function highlightCard(kode) {
             console.log('🎯 Highlighting card:', kode);
             
@@ -532,6 +483,7 @@
             }
         }
 
+        // Clear all highlights
         function clearAllHighlights() {
             console.log('🧹 Clearing all highlights');
             const allCards = document.querySelectorAll('.service-card');
@@ -540,14 +492,18 @@
             });
         }
 
+        // NEW: Speech function dengan callback yang akurat
         function speakQueueWithCallback(fullNumber, pelayanan, namaPasien, kode, onComplete) {
+            // Cancel any ongoing speech
             window.speechSynthesis.cancel();
             
+            // Play sound effect
             const audio = document.getElementById('callSound');
             if (audio) {
                 audio.play().catch(e => console.warn('Audio play failed:', e));
             }
             
+            // Wait for sound effect, then start speech
             setTimeout(() => {
                 const utterance = new SpeechSynthesisUtterance();
                 const match = fullNumber.match(/^([A-Z]+)(\d+)$/);
@@ -566,7 +522,7 @@
                 if (pelayanan.toLowerCase().includes('nurse station')) {
                     text += ' di ' + formatTextForSpeech(pelayanan).replace('Nurse', 'Nurs');
                 } else {
-                    text += ' di Ruang ' + formatTextForSpeech(pelayanan).replace('R.', '').trim();
+                    text += ' di Ruang ' + formatTextForSpeech(pelayanan);
                 }
                 
                 if (namaPasien && namaPasien.trim() !== '') {
@@ -583,6 +539,7 @@
                 
                 let callbackFired = false;
                 
+                // Primary: onend event
                 utterance.onend = () => {
                     if (!callbackFired) {
                         callbackFired = true;
@@ -591,6 +548,7 @@
                     }
                 };
                 
+                // Fallback: onerror event
                 utterance.onerror = (event) => {
                     if (!callbackFired) {
                         callbackFired = true;
@@ -599,6 +557,8 @@
                     }
                 };
                 
+                // Safety: Timeout based on text length
+                // Rumus: (jumlah kata * 600ms per kata) + buffer 2 detik
                 const wordCount = text.split(' ').length;
                 const estimatedDuration = (wordCount * 600) + 2000;
                 
@@ -610,15 +570,18 @@
                     }
                 }, estimatedDuration);
                 
+                // Start speaking
                 window.speechSynthesis.speak(utterance);
                 
-            }, 500);
+            }, 500); // Delay after sound effect
         }
 
+        // Keep original speakQueue for backward compatibility if needed
         function speakQueue(fullNumber, pelayanan, namaPasien = '') {
             speakQueueWithCallback(fullNumber, pelayanan, namaPasien, null, null);
         }
         
+        // Convert number to Indonesian words
         function numberToIndonesian(num) {
             if (num === 0) return 'nol';
             
@@ -653,6 +616,7 @@
             return num.toString();
         }
 
+        // Convert to lowercase and apply title case for better speech synthesis
         function formatTextForSpeech(text) {
             return text
                 .toLowerCase()
@@ -661,6 +625,7 @@
                 .join(' ');
         }
         
+        // Update clock
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -669,6 +634,7 @@
             $('#currentTime').text(`${hours}.${minutes}.${seconds}`);
         }
         
+        // Update display
         function updateDisplay() {
             $.ajax({
                 url: BASE_URL + 'api/queue/by-services/' + LANTAI,
@@ -676,6 +642,8 @@
                 dataType: 'json',
                 cache: false,
                 success: function(response) {
+                    // console.log('Display update:', response);
+                    
                     if (response.success) {
                         renderServices(response.services);
                     }
@@ -686,6 +654,7 @@
             });
         }
         
+        // Initialize
         $(document).ready(function() {
             updateClock();
             setInterval(updateClock, 1000);
