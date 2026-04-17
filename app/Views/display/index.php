@@ -247,8 +247,8 @@
     <!-- Header -->
     <div class="header">
         <div class="logo-section">
-            <img src="<?= base_url('assets/img/logotebetputih.png') ?>" style="width: 200px; height: auto;" alt="Logo Puskesmas">
-            <img src="<?= base_url('assets/img/logo-putih.png') ?>" alt="Logo SIAP">
+            <img src="<?= base_url('assets/img/logotebethitam.png') ?>" style="width: 200px; height: auto;" alt="Logo Puskesmas">
+            <img src="<?= base_url('assets/img/logo.png') ?>" alt="Logo SIAP">
         </div>
         <div class="clock-display">
             <i class="bi bi-clock"></i>
