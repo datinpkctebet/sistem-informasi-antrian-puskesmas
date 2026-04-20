@@ -247,8 +247,6 @@ class QueueModel extends Model
             'kode_antrian'  => $queue['kode_antrian'],
             'lantai'        => $queue['lantai'],
             'tanggal'       => $queue['tanggal'],
-            'petugas_id'    => $petugasId,
-            'loket'         => $loket,
             'status'        => 'calling'
         ])->set([
             'status' => 'called'

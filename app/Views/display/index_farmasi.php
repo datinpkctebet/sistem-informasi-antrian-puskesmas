@@ -257,7 +257,7 @@
         <!-- Penyerahan Obat -->
         <div class="status-column">
             <div class="column-header serving">
-                <span><i class="bi bi-hand-index"></i> Penyerahan Obat</span>
+                <span><i class="bi bi-capsule"></i> Penyerahan Obat</span>
                 <span class="column-count" id="countServing">0</span>
             </div>
             <div class="queue-items" id="queueServing">

@@ -173,7 +173,7 @@
 <script>
 let allQueues = [];
 let currentPage = 1;
-const itemsPerPage = 10;
+const itemsPerPage = 200;
 
 // Preview TTS function (no sound, just show text)
 function previewQueue(fullNumber, pelayanan, namaPasien = '') {

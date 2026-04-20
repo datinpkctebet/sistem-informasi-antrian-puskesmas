@@ -138,6 +138,15 @@
         .service-card.lansia.active {
             background: linear-gradient(135deg, #5568d3 0%, #a87acc 100%);
         }
+
+        /* PTM colored variant */
+        .service-card.ptm {
+            background: linear-gradient(135deg, #f57c00 0%, #f0b45b 100%);
+        }
+        
+        .service-card.ptm.active {
+            background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%);
+        }
         
         @keyframes pulse {
             0%, 100% { transform: scale(1.05); }
@@ -146,19 +155,19 @@
         
         .service-name {
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.7rem;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 10px;
         }
 
         .service-card.nurse-station .service-name {
-            font-size: 1.3rem;
+            font-size: 1.7rem;
         }
 
         .queue-name {
             color: white;
-            font-size: 1rem;
+            font-size: 1.5rem;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 15px;
@@ -419,9 +428,10 @@
                     const activeClass = isActive ? 'active' : '';
                     const dimmedClass = (currentActiveCard !== null && !isActive) ? 'dimmed' : '';
                     const lansiClass = group === 'LANSIA' ? 'lansia' : '';
+                    const ptmClass = group === 'PTM' ? 'ptm' : '';
                     
                     html += `
-                    <div class="service-card nurse-station ${activeClass} ${dimmedClass} ${lansiClass}" data-service-code="${kode}">
+                    <div class="service-card nurse-station ${activeClass} ${dimmedClass} ${lansiClass} ${ptmClass}" data-service-code="${kode}">
                         <div class="service-name">${card.nama_pelayanan.toUpperCase()}</div>
                         <div class="queue-name">${displayName}</div>
                         <div class="queue-numbers">
@@ -445,9 +455,10 @@
                     const activeClass = isActive ? 'active' : '';
                     const dimmedClass = (currentActiveCard !== null && !isActive) ? 'dimmed' : '';
                     const lansiClass = group === 'LANSIA' ? 'lansia' : '';
+                    const ptmClass = group === 'PTM' ? 'ptm' : '';
                     
                     html += `
-                    <div class="service-card ${activeClass} ${dimmedClass} ${lansiClass}" data-service-code="${kode}">
+                    <div class="service-card ${activeClass} ${dimmedClass} ${lansiClass} ${ptmClass}" data-service-code="${kode}">
                         <div class="service-name">${card.nama_pelayanan.toUpperCase()}</div>
                         <div class="queue-name">${displayName}</div>
                         <div class="queue-numbers">
