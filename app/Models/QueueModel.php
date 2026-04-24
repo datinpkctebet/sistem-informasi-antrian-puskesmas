@@ -274,7 +274,7 @@ class QueueModel extends Model
     public function finishQueue($queueId)
     {
         return $this->update($queueId, [
-            'status'        => 'done',
+            'status'        => 'called',
             'waktu_selesai' => date('Y-m-d H:i:s')
         ]);
     }
@@ -463,5 +463,41 @@ class QueueModel extends Model
                 'message' => 'Gagal memanggil ulang antrian'
             ];
         }
+    }
+
+    // Method untuk create farmasi queue (ketika perawat klik done)
+    public function createFarmasiQueue($queueId)
+    {
+        $originalQueue = $this->find($queueId);
+        
+        if (!$originalQueue) {
+            return [
+                'success' => false,
+                'message' => 'Queue tidak ditemukan'
+            ];
+        }
+
+        // Create new queue di farmasi dengan status waiting
+        $farmasiQueue = [
+            'kode_antrian' => 'FARMASI_' . $originalQueue['kode_antrian'],
+            'nomor_antrian' => $originalQueue['nomor_antrian'],
+            'full_number' => $originalQueue['full_number'],
+            'nama_pasien' => $originalQueue['nama_pasien'],
+            'lantai' => 'farmasi',
+            'status' => 'waiting',
+            'tanggal' => $originalQueue['tanggal']
+        ];
+
+        if ($this->insert($farmasiQueue)) {
+            return [
+                'success' => true,
+                'message' => 'Antrian farmasi berhasil dibuat'
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => 'Gagal membuat antrian farmasi'
+        ];
     }
 }

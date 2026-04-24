@@ -44,6 +44,11 @@ $routes->group('queue', ['filter' => 'auth'], function($routes) {
     $routes->get('check-status', 'QueueController::checkStatus');
 });
 
+// Farmasi routes (require login)
+$routes->group('farmasi', ['filter' => 'auth', 'filter' => 'role:perawat,farmasi'], function($routes) {
+    $routes->get('call', 'FarmasiController::call', ['as' => 'farmasi.call']);
+});
+
 // Display route (public)
 $routes->get('display', 'DisplayController::index'); // Default lantai 1
 $routes->get('display/(:segment)', 'DisplayController::index/$1'); // Dynamic lantai
@@ -82,4 +87,7 @@ $routes->group('api', function($routes) {
     $routes->get('queue/statistics', 'Api\QueueApiController::getStatistics');
     $routes->get('queue/list', 'Api\QueueApiController::getList');
     $routes->get('queue/by-services/(:segment)', 'DisplayController::getByServices/$1');
+    $routes->get('farmasi/queues', 'FarmasiController::getQueuesByStatus');
+    $routes->post('farmasi/call-next', 'FarmasiController::callNext');
+    $routes->post('farmasi/finish', 'FarmasiController::finish');
 });

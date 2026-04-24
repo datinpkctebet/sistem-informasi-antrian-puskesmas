@@ -32,6 +32,10 @@
         background-color: #6c757d;
         color: #fff;
     }
+    .status-penyiapan {
+        background-color: #3538dc;
+        color: #fff;
+    }
     .status-dilewati {
         background-color: #3538dc;
         color: #fff;
@@ -52,16 +56,6 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><i class="bi bi-megaphone"></i> Nurse Station - Antrian Pasien</h2>
-    <!-- <div>
-        <button class="btn btn-outline-primary me-2" id="btnNurseStation">
-            <i class="bi bi-hospital"></i> Nurse Station<br>
-            <small>Aktif</small>
-        </button>
-        <button class="btn btn-outline-secondary" id="btnNurseStation24">
-            <i class="bi bi-hospital"></i> Nurse Station 24 Jam<br>
-            <small>Aktif</small>
-        </button>
-    </div> -->
 </div>
 
 <!-- Filter Section -->
@@ -86,7 +80,6 @@
                 <option value="waiting">Menunggu</option>
                 <option value="calling">Dipanggil</option>
                 <option value="called">Selesai</option>
-                <!-- <option value="skip">Dilewati</option> -->
             </select>
         </div>
         
@@ -115,9 +108,9 @@
                         <th style="width: 250px;">Nama</th>
                         <th style="width: 150px;">Poli</th>
                         <th style="width: 120px;">Status</th>
-                        <!-- <th style="width: 120px;">Waktu Ambil</th> -->
                         <th style="width: 200px;">Dipanggil Oleh</th>
-                        <th style="width: 250px;">Aksi</th>
+                        <th style="width: 250px;">Panggilan</th>
+                        <th style="width: 250px;">Kirim Obat</th>
                     </tr>
                 </thead>
                 <tbody id="queueTableBody">
@@ -136,33 +129,6 @@
                     <!-- Will be populated by JavaScript -->
                 </ul>
             </nav>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Edit Nama Pasien -->
-<div class="modal fade" id="modalEditNama" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Nama Pasien</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="editQueueId">
-                <div class="mb-3">
-                    <label class="form-label">Nomor Antrian</label>
-                    <input type="text" class="form-control" id="editFullNumber" readonly>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Nama Pasien</label>
-                    <input type="text" class="form-control" id="editNamaPasien" placeholder="Masukkan nama pasien">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" id="btnSaveNama">Simpan</button>
-            </div>
         </div>
     </div>
 </div>
@@ -252,7 +218,10 @@ function getStatusBadge(status) {
         'waiting': '<span class="status-badge status-menunggu">Menunggu</span>',
         'calling': '<span class="status-badge status-dipanggil">Dipanggil</span>',
         'done': '<span class="status-badge status-selesai">Done</span>',
-        'called': '<span class="status-badge status-selesai">Selesai</span>'
+        'called': '<span class="status-badge status-selesai">Selesai</span>',
+        'farmasi_preparing': '<span class="status-badge status-penyiapan">Penyiapan Obat</span>',
+        'farmasi_serving': '<span class="status-badge status-dipanggil">Penyerahan Obat</span>',
+        'farmasi_completed': '<span class="status-badge status-selesai">Obat Diambil</span>',
     };
     return statusMap[status] || status;
 }
@@ -276,37 +245,29 @@ function getActionButtons(queue) {
         // buttons += `<button class="btn btn-success action-btn" onclick="doneQueue(${queue.id})" title="Selesai">
         //     <i class="bi bi-check"></i>
         // </button>`;
-    }
-    
-    if (queue.status === 'calling') {
-        // Call button (green)
-        // buttons += `<button class="btn btn-primary action-btn" onclick="recallQueue(${queue.id})" title="Panggil Antrian">
-        //     <i class="bi bi-volume-up"></i>
-        // </button>`;
-        // Next/Finish button (orange)
-        // buttons += `<button class="btn btn-warning action-btn" onclick="nextQueue(${queue.id})" title="Lanjut">
-        //     <i class="bi bi-skip-forward"></i>
-        // </button>`;
-
+    } else {
         // Warning button (yellow)
         buttons += `<button class="btn btn-primary action-btn" onclick="warnQueue(${queue.id})" title="Peringatan">
             <i class="bi bi-volume-up"></i>
         </button>`;
-
-        // Check/Done button (green checkmark)
-        // buttons += `<button class="btn btn-success action-btn" onclick="doneQueue(${queue.id})" title="Selesai">
-        //     <i class="bi bi-check"></i>
-        // </button>`;
-    }
-
-    if (queue.status === 'called') {
-        // Call button (green)
-        buttons += `<button class="btn btn-primary action-btn" onclick="recallQueue(${queue.id})" title="Panggil Antrian">
-            <i class="bi bi-volume-up"></i>
-        </button>`;
     }
     
-    
+    return buttons;
+}
+
+// Get action buttons farmasi
+function getActionButtonsFarmasi(queue) {
+    let buttons = '';
+
+    if (queue.status === 'farmasi_preparing') {
+        buttons += `<button class="btn btn-danger action-btn" onclick="doneQueue(${queue.id})" title="Batal Kirim Obat">
+                <i class="bi bi-capsule-pill"></i>
+            </button>`;
+    } else {
+        buttons += `<button class="btn btn-success action-btn" onclick="doneQueue(${queue.id})" title="Kirim Obat">
+                <i class="bi bi-capsule"></i>
+            </button>`;
+    }
     return buttons;
 }
 
@@ -365,6 +326,7 @@ function renderTable() {
                     <td>${getStatusBadge(queue.status)}</td>
                     <td>${queue.petugas_nama || '-'}</td>
                     <td>${getActionButtons(queue)}</td>
+                    <td>${getActionButtonsFarmasi(queue)}</td>
                     </tr>
                     `;
                 });

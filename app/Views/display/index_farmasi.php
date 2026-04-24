@@ -92,7 +92,7 @@
         }
         
         .column-header.preparing {
-            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            background: linear-gradient(135deg, #6c6ee9 0%, #3538dc 100%);
         }
         
         .column-header.serving {
@@ -100,7 +100,7 @@
         }
         
         .column-header.completed {
-            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            background: linear-gradient(135deg, #8e959b 0%, #6c757d 100%);
         }
         
         .column-count {
@@ -144,7 +144,7 @@
         }
         
         .queue-item.preparing {
-            border-left-color: #ff9800;
+            border-left-color: #3538dc;
         }
         
         .queue-item.serving {
@@ -246,7 +246,7 @@
                 <span><i class="bi bi-hourglass-split"></i> Obat Sedang Disiapkan</span>
                 <span class="column-count" id="countPreparing">0</span>
             </div>
-            <div class="queue-items" id="queuePreparing">
+            <div class="queue-items" id="farmasiPreparing">
                 <div class="empty-state">
                     <i class="bi bi-inbox"></i>
                     <p>Tidak ada antrian</p>
@@ -260,7 +260,7 @@
                 <span><i class="bi bi-capsule"></i> Penyerahan Obat</span>
                 <span class="column-count" id="countServing">0</span>
             </div>
-            <div class="queue-items" id="queueServing">
+            <div class="queue-items" id="farmasiServing">
                 <div class="empty-state">
                     <i class="bi bi-inbox"></i>
                     <p>Tidak ada antrian</p>
@@ -274,7 +274,7 @@
                 <span><i class="bi bi-check-circle"></i> Obat Sudah Diambil</span>
                 <span class="column-count" id="countCompleted">0</span>
             </div>
-            <div class="queue-items" id="queueCompleted">
+            <div class="queue-items" id="farmasiCompleted">
                 <div class="empty-state">
                     <i class="bi bi-inbox"></i>
                     <p>Tidak ada antrian</p>
@@ -291,7 +291,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         const BASE_URL = '<?= base_url() ?>';
-        const LANTAI = 'farmasi';
         let lastHighlightedId = null;
         let serviceStates = {};
 
@@ -332,14 +331,17 @@
 
         // Fetch and render farmasi queues
         function fetchAndRenderQueues() {
+            const tanggal = new Date().toISOString().split('T')[0];
+            
             $.ajax({
-                url: BASE_URL + 'api/queue/by-services/' + LANTAI,
+                url: BASE_URL + 'api/farmasi/queues',
                 method: 'GET',
+                data: { tanggal: tanggal },
                 dataType: 'json',
                 cache: false,
                 success: function(response) {
-                    if (response.success && response.services) {
-                        renderFarmasi(response.services);
+                    if (response.success) {
+                        renderFarmasi(response.queues);
                     }
                 },
                 error: function(xhr, status, error) {
@@ -349,59 +351,31 @@
         }
 
         // Render farmasi display
-        function renderFarmasi(services) {
-            // Collect all queue items by status
-            let preparing = [];
-            let serving = [];
-            let completed = [];
-            let newCalling = null;
-
-            services.forEach(service => {
-                // Get all queues for this service
-                const serviceCode = service.kode_antrian;
-                
-                // For now, using current_queue to demonstrate
-                // In real implementation, you'd need API to return all queues by status
-                if (service.current_queue) {
-                    const current = service.current_queue;
-                    
-                    // Determine status
-                    const status = current.status || 'waiting';
-                    
-                    if (status === 'calling') {
-                        serving.push(current);
-                        if (current.id !== lastHighlightedId) {
-                            newCalling = current;
-                            lastHighlightedId = current.id;
-                        }
-                    } else if (status === 'done') {
-                        completed.push(current);
-                    } else {
-                        preparing.push(current);
-                    }
-                }
-                
-                // Add waiting count to preparing
-                if (service.waiting_count > 0) {
-                    // This would ideally come from a full queue list API
-                    console.log('Waiting count for', serviceCode, ':', service.waiting_count);
-                }
-            });
-
+        function renderFarmasi(queues) {
+            const preparing = queues.penyiapan_obat || [];
+            const serving = queues.penyerahan_obat || [];
+            const completed = queues.obat_diambil || [];
+            
             // Update counts
             $('#countPreparing').text(preparing.length);
             $('#countServing').text(serving.length);
             $('#countCompleted').text(completed.length);
 
-            // Render columns
-            renderQueueColumn('queuePreparing', preparing, 'preparing', null);
-            renderQueueColumn('queueServing', serving, 'serving', lastHighlightedId);
-            renderQueueColumn('queueCompleted', completed, 'completed', null);
-
-            // If new call, play sound and speak
-            if (newCalling) {
-                playCallNotification(newCalling);
+            // Check if there's a new call in serving queue
+            let newHighlight = null;
+            if (serving.length > 0) {
+                const firstServing = serving[0];
+                if (firstServing.id !== lastHighlightedId) {
+                    newHighlight = firstServing;
+                    lastHighlightedId = firstServing.id;
+                    playCallNotification(firstServing);
+                }
             }
+
+            // Render columns
+            renderQueueColumn('farmasiPreparing', preparing, 'preparing', null);
+            renderQueueColumn('farmasiServing', serving, 'serving', lastHighlightedId);
+            renderQueueColumn('farmasiCompleted', completed, 'completed', null);
         }
 
         // Play call notification
@@ -418,7 +392,7 @@
                 const patientName = queue.nama_pasien || '';
                 
                 const utterance = new SpeechSynthesisUtterance();
-                let text = `Nomor antrian ${numberToIndonesian(queue.nomor_antrian)} farmasi`;
+                let text = `Nomor antrian ${numberToIndonesian(queue.nomor_antrian)} di farmasi`;
                 
                 if (patientName) {
                     text += `. Atas nama ${patientName}`;

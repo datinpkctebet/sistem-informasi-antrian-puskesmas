@@ -103,6 +103,12 @@ class QueueController extends BaseController
     public function finish($queueId)
     {
         if ($this->queueModel->finishQueue($queueId)) {
+            // Jika ini antrian normal (bukan farmasi), create antrian farmasi
+            $queue = $this->queueModel->find($queueId);
+            if ($queue && $queue['lantai'] !== 'farmasi') {
+                $this->queueModel->createFarmasiQueue($queueId);
+            }
+
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Antrian selesai'
