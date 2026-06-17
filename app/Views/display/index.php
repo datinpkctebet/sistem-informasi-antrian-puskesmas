@@ -6,7 +6,7 @@
     <title>Display Antrian - <?= ucfirst(str_replace('_', ' ', $lantai)) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
+    <!-- <style>
         * {
             margin: 0;
             padding: 0;
@@ -248,6 +248,668 @@
             }
             .service-card.nurse-station {
                 flex: 0 0 calc(33.33% - 14px);
+            }
+        }
+    </style> -->
+    <!-- <style>
+        :root {
+            --header-height: 85px;
+            --base-font-size: 16px;
+            --card-padding: clamp(15px, 3vw, 30px);
+            --gap-size: clamp(10px, 2vw, 20px);
+            --header-padding: clamp(10px, 2vh, 15px);
+            --main-padding: clamp(10px, 2vw, 30px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #ffffff 0%, #def7d6 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            font-size: var(--base-font-size);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: var(--header-padding) var(--main-padding);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            height: var(--header-height);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 1vw, 15px);
+        }
+
+        .logo-section img {
+            height: clamp(30px, 6vh, 50px);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .puskesmas-name {
+            color: white;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .clock-display {
+            background: rgba(255, 255, 255, 0.2);
+            color: black;
+            padding: clamp(8px, 1.5vh, 10px) clamp(15px, 3vw, 25px);
+            border-radius: 50px;
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: clamp(5px, 1vw, 10px);
+            white-space: nowrap;
+        }
+
+        .main-container {
+            padding: var(--main-padding);
+            height: calc(100vh - var(--header-height));
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-size);
+        }
+
+        /* Service group row layout */
+        .service-group {
+            display: flex;
+            gap: var(--gap-size);
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, #4aa171 0%, #186e2b 100%);
+            border-radius: clamp(10px, 2vw, 15px);
+            padding: var(--card-padding);
+            min-height: clamp(120px, 20vh, 200px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            flex: 1 1 clamp(200px, 22vw, 280px);
+        }
+
+        /* Nurse station card - wider */
+        .service-card.nurse-station {
+            flex: 1 1 clamp(200px, 26vw, 320px);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card.active {
+            background: linear-gradient(135deg, #1e8a4b 0%, #094120 100%);
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(39, 174, 96, 0.5);
+            animation: pulse 1.5s infinite;
+            z-index: 10;
+        }
+
+        .service-card.active::before {
+            opacity: 1;
+        }
+
+        .service-card.dimmed {
+            opacity: 0.5;
+            filter: grayscale(30%);
+        }
+
+        /* LANSIA colored variant */
+        .service-card.lansia {
+            background: linear-gradient(135deg, #667eea 0%, #c1a1e0 100%);
+        }
+
+        .service-card.lansia.active {
+            background: linear-gradient(135deg, #5568d3 0%, #a87acc 100%);
+        }
+
+        /* PTM colored variant */
+        .service-card.ptm {
+            background: linear-gradient(135deg, #f57c00 0%, #f0b45b 100%);
+        }
+
+        .service-card.ptm.active {
+            background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1.05); }
+            50% { transform: scale(1.08); }
+        }
+
+        .service-name {
+            color: white;
+            font-size: clamp(0.9rem, 2.5vw, 1.7rem);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: clamp(5px, 1vh, 10px);
+            line-height: 1.2;
+        }
+
+        .service-card.nurse-station .service-name {
+            font-size: clamp(0.9rem, 2.5vw, 1.7rem);
+        }
+
+        .queue-name {
+            color: white;
+            font-size: clamp(0.8rem, 2vw, 1.5rem);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: clamp(8px, 1.5vh, 15px);
+            opacity: 0.95;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .queue-numbers {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: clamp(5px, 1vw, 10px);
+        }
+
+        .current-number {
+            color: white;
+            font-size: clamp(2.5rem, 10vw, 5rem);
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            line-height: 1;
+        }
+
+        .service-card.nurse-station .current-number {
+            font-size: clamp(3rem, 12vw, 6rem);
+        }
+
+        .waiting-count {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(1rem, 3vw, 2rem);
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .waiting-count small {
+            display: block;
+            font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+            opacity: 0.8;
+        }
+
+        .no-data {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            text-align: center;
+            padding: clamp(20px, 5vh, 40px);
+        }
+
+        /* Scrollbar styling */
+        .main-container::-webkit-scrollbar {
+            width: clamp(4px, 0.5vw, 8px);
+        }
+
+        .main-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .recall-badge {
+            display: inline-block;
+            background: #ff9800;
+            color: white;
+            padding: clamp(2px, 0.5vh, 4px) clamp(4px, 1vw, 8px);
+            border-radius: 12px;
+            font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+            margin-left: clamp(3px, 0.5vw, 10px);
+            white-space: nowrap;
+        }
+
+        /* Responsive breakpoints */
+
+        /* Tablet & Small TV (768px - 1023px) */
+        @media (max-width: 1023px) {
+            .service-card {
+                flex: 1 1 clamp(180px, 30vw, 250px);
+            }
+            
+            .service-card.nurse-station {
+                flex: 1 1 clamp(180px, 35vw, 280px);
+            }
+        }
+
+        /* Mobile Landscape (576px - 767px) */
+        @media (max-width: 767px) {
+            :root {
+                --header-height: 70px;
+            }
+            
+            .service-card {
+                flex: 1 1 clamp(140px, 45vw, 200px);
+                min-height: clamp(100px, 30vh, 160px);
+            }
+            
+            .service-card.nurse-station {
+                flex: 1 1 clamp(140px, 45vw, 200px);
+            }
+            
+            .logo-section img {
+                max-width: 150px;
+                height: auto;
+            }
+        }
+
+        /* Small displays (< 576px) */
+        @media (max-width: 575px) {
+            :root {
+                --header-height: 60px;
+                --base-font-size: 14px;
+            }
+            
+            .service-card {
+                flex: 1 1 100%;
+                min-height: clamp(80px, 25vh, 140px);
+            }
+            
+            .service-card.nurse-station {
+                flex: 1 1 100%;
+            }
+            
+            .service-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Large TV displays (> 1920px) */
+        @media (min-width: 1921px) {
+            :root {
+                --base-font-size: 18px;
+            }
+        }
+
+        /* Ultra wide displays (> 2560px) */
+        @media (min-width: 2561px) {
+            :root {
+                --base-font-size: 20px;
+            }
+            
+            .service-card {
+                flex: 1 1 clamp(300px, 20vw, 400px);
+            }
+        }
+    </style> -->
+    <style>
+        :root {
+            --header-height: 60px;
+            --base-font-size: 13px;
+            --scale-factor: 0.8;
+            --card-padding: clamp(10px, 2vw, 20px);
+            --gap-size: clamp(8px, 1.5vw, 15px);
+            --header-padding: clamp(8px, 1.5vh, 12px);
+            --main-padding: clamp(8px, 1.5vw, 20px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #ffffff 0%, #def7d6 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            font-size: var(--base-font-size);
+            transform: scale(var(--scale-factor));
+            transform-origin: top left;
+            width: calc(100% / var(--scale-factor));
+            height: calc(100% / var(--scale-factor));
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: var(--header-padding) var(--main-padding);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            height: var(--header-height);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: clamp(6px, 0.8vw, 12px);
+            flex-shrink: 0;
+        }
+
+        .logo-section img {
+            height: clamp(25px, 5vh, 40px);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .puskesmas-name {
+            color: white;
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .clock-display {
+            background: rgba(255, 255, 255, 0.2);
+            color: black;
+            padding: clamp(6px, 1.2vh, 8px) clamp(12px, 2.5vw, 20px);
+            border-radius: 50px;
+            font-size: clamp(1rem, 1.8vw, 1.5rem);
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: clamp(4px, 0.8vw, 8px);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .main-container {
+            padding: var(--main-padding);
+            height: calc(100vh / var(--scale-factor) - var(--header-height));
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-size);
+        }
+
+        /* Service group row layout */
+        .service-group {
+            display: flex;
+            gap: var(--gap-size);
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, #4aa171 0%, #186e2b 100%);
+            border-radius: clamp(8px, 1.5vw, 12px);
+            padding: var(--card-padding);
+            min-height: clamp(100px, 18vh, 160px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            flex: 1 1 clamp(180px, 19vw, 240px);
+        }
+
+        /* Nurse station card - wider */
+        .service-card.nurse-station {
+            flex: 1 1 clamp(180px, 23vw, 260px);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card.active {
+            background: linear-gradient(135deg, #1e8a4b 0%, #094120 100%);
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(39, 174, 96, 0.5);
+            animation: pulse 1.5s infinite;
+            z-index: 10;
+        }
+
+        .service-card.active::before {
+            opacity: 1;
+        }
+
+        .service-card.dimmed {
+            opacity: 0.5;
+            filter: grayscale(30%);
+        }
+
+        /* LANSIA colored variant */
+        .service-card.lansia {
+            background: linear-gradient(135deg, #667eea 0%, #c1a1e0 100%);
+        }
+
+        .service-card.lansia.active {
+            background: linear-gradient(135deg, #5568d3 0%, #a87acc 100%);
+        }
+
+        /* PTM colored variant */
+        .service-card.ptm {
+            background: linear-gradient(135deg, #f57c00 0%, #f0b45b 100%);
+        }
+
+        .service-card.ptm.active {
+            background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1.05); }
+            50% { transform: scale(1.08); }
+        }
+
+        .service-name {
+            color: white;
+            font-size: clamp(0.75rem, 2vw, 1.3rem);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: clamp(3px, 0.8vh, 8px);
+            line-height: 1.1;
+        }
+
+        .service-card.nurse-station .service-name {
+            font-size: clamp(0.75rem, 2vw, 1.3rem);
+        }
+
+        .queue-name {
+            color: white;
+            font-size: clamp(0.7rem, 1.6vw, 1.2rem);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: clamp(5px, 1vh, 12px);
+            opacity: 0.95;
+            line-height: 1.1;
+            word-break: break-word;
+            min-height: 1.2em;
+        }
+
+        .queue-numbers {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: clamp(3px, 0.5vw, 8px);
+        }
+
+        .current-number {
+            color: white;
+            font-size: clamp(1.8rem, 7.5vw, 3.5rem);
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            line-height: 1;
+        }
+
+        .service-card.nurse-station .current-number {
+            font-size: clamp(2rem, 9vw, 4.5rem);
+        }
+
+        .waiting-count {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(0.8rem, 2.2vw, 1.5rem);
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .waiting-count small {
+            display: block;
+            font-size: clamp(0.55rem, 1.2vw, 0.7rem);
+            opacity: 0.8;
+        }
+
+        .no-data {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: clamp(1rem, 2.5vw, 1.6rem);
+            text-align: center;
+            padding: clamp(15px, 4vh, 30px);
+        }
+
+        /* Scrollbar styling */
+        .main-container::-webkit-scrollbar {
+            width: clamp(3px, 0.4vw, 6px);
+        }
+
+        .main-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .recall-badge {
+            display: inline-block;
+            background: #ff9800;
+            color: white;
+            padding: clamp(1px, 0.3vh, 3px) clamp(3px, 0.8vw, 6px);
+            border-radius: 12px;
+            font-size: clamp(0.5rem, 1vw, 0.7rem);
+            margin-left: clamp(2px, 0.3vw, 6px);
+            white-space: nowrap;
+        }
+
+        /* Responsive breakpoints */
+
+        /* Tablet & Small TV (768px - 1023px) */
+        @media (max-width: 1023px) {
+            :root {
+                --scale-factor: 0.75;
+            }
+            
+            .service-card {
+                flex: 1 1 clamp(160px, 28vw, 220px);
+            }
+            
+            .service-card.nurse-station {
+                flex: 1 1 clamp(160px, 32vw, 250px);
+            }
+        }
+
+        /* Mobile Landscape (576px - 767px) */
+        @media (max-width: 767px) {
+            :root {
+                --header-height: 55px;
+                --scale-factor: 0.7;
+            }
+            
+            .service-card {
+                flex: 1 1 clamp(140px, 40vw, 180px);
+                min-height: clamp(90px, 25vh, 140px);
+            }
+            
+            .service-card.nurse-station {
+                flex: 1 1 clamp(140px, 40vw, 180px);
+            }
+            
+            .logo-section img {
+                max-width: 120px;
+                height: auto;
+            }
+        }
+
+        /* Small displays (< 576px) */
+        @media (max-width: 575px) {
+            :root {
+                --header-height: 50px;
+                --base-font-size: 12px;
+                --scale-factor: 0.65;
+            }
+            
+            .service-card {
+                flex: 1 1 100%;
+                min-height: clamp(80px, 22vh, 130px);
+            }
+            
+            .service-card.nurse-station {
+                flex: 1 1 100%;
+            }
+            
+            .service-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Large TV displays (> 1920px) */
+        @media (min-width: 1921px) {
+            :root {
+                --base-font-size: 14px;
+                --scale-factor: 0.85;
+            }
+        }
+
+        /* Ultra wide displays (> 2560px) */
+        @media (min-width: 2561px) {
+            :root {
+                --base-font-size: 15px;
+                --scale-factor: 0.9;
+            }
+            
+            .service-card {
+                flex: 1 1 clamp(250px, 18vw, 350px);
             }
         }
     </style>

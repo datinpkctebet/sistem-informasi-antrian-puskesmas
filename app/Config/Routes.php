@@ -55,7 +55,8 @@ $routes->get('display/(:segment)', 'DisplayController::index/$1'); // Dynamic la
 $routes->get('display/data/(:segment)', 'DisplayController::getData/$1'); // Legacy API
 
 // Display Farmasi route (public)
-$routes->get('farmasi/', 'DisplayController::indexFarmasi'); 
+$routes->get('farmasi/', 'DisplayController::indexFarmasi');
+$routes->get('3/', 'DisplayController::index3');
 
 // Admin routes
 $routes->group('admin', ['filter' => 'auth', 'filter' => 'role:admin'], function($routes) {
