@@ -57,9 +57,9 @@
             </a>
             
             <?php if (session()->get('role') == 'perawat'): ?>
-                <a class="nav-link <?= url_is('queue/input*') ? 'active' : '' ?>" href="<?= base_url('queue/input') ?>">
+                <!-- <a class="nav-link <?= url_is('queue/input*') ? 'active' : '' ?>" href="<?= base_url('queue/input') ?>">
                     <i class="bi bi-plus-circle"></i> Input Antrian
-                </a>
+                </a> -->
             <?php endif; ?>
             
             <?php if (in_array(session()->get('role'), ['perawat', 'dokter'])): ?>
@@ -81,7 +81,7 @@
                     <i class="bi bi-tv"></i> Display Antrian
                 </a>
             <?php elseif (session()->get('lantai') == '3'): ?>
-                <a class="nav-link" href="<?= base_url('display') ?>/3" target="_blank">
+                <a class="nav-link" href="<?= base_url('') ?>/3" target="_blank">
                     <i class="bi bi-tv"></i> Display Antrian
                 </a>
             <?php endif; ?>

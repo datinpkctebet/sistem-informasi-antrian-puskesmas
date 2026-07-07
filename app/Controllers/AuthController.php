@@ -10,7 +10,7 @@ class AuthController extends BaseController
     {
         // If already logged in, redirect to dashboard
         if (session()->get('isLoggedIn')) {
-            return redirect()->to('/dashboard');
+            return redirect()->to('/queue/call');
         }
 
         return view('auth/login');
@@ -47,7 +47,7 @@ class AuthController extends BaseController
 
             session()->set($sessionData);
 
-            return redirect()->to('/dashboard')->with('success', 'Login berhasil');
+            return redirect()->to('/queue/call')->with('success', 'Login berhasil');
         }
 
         return redirect()->back()->withInput()->with('error', 'Username atau password salah');

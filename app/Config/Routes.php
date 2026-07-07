@@ -56,6 +56,7 @@ $routes->get('display/data/(:segment)', 'DisplayController::getData/$1'); // Leg
 
 // Display Farmasi route (public)
 $routes->get('farmasi/', 'DisplayController::indexFarmasi');
+$routes->get('2_kiri/', 'DisplayController::index2_kiri');
 $routes->get('3/', 'DisplayController::index3');
 
 // Admin routes

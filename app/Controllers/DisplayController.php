@@ -39,6 +39,28 @@ class DisplayController extends BaseController
     }
 
     // Display by lantai (via route parameter)
+    public function index2_kiri($lantai = '2_kiri')
+    {
+        // Validate lantai
+        $validLantai = ['1', '2_kiri', '2_kanan', '3', 'lt_2_kiri', 'lt_2_kanan'];
+        
+        // Convert lt_ prefix to standard format
+        if (strpos($lantai, 'lt_') === 0) {
+            $lantai = str_replace('lt_', '', $lantai);
+        }
+        
+        if (!in_array($lantai, ['1', '2_kiri', '2_kanan', '3'])) {
+            $lantai = '1'; // Default to lantai 1
+        }
+
+        $data = [
+            'lantai' => $lantai
+        ];
+
+        return view('display/index', $data);
+    }
+
+    // Display by lantai (via route parameter)
     public function index3($lantai = '3')
     {
         // Validate lantai

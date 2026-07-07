@@ -12,100 +12,194 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
+        html, body {
+            height: 100dvh;
+            width: 100vw;
+        }
+
         body {
             background: linear-gradient(180deg, #ffffff 0%, #def7d6 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
-            height: 100vh;
         }
-        
+
+        /* ===== HEADER (fluid sizing so it never eats too much vertical space) ===== */
         .header {
             background: rgba(255, 255, 255, 0.1);
-            padding: 15px 30px;
+            padding: clamp(6px, 1.2vh, 15px) clamp(14px, 2vw, 30px);
+            height: clamp(55px, 9vh, 85px);
             display: flex;
             justify-content: space-between;
             align-items: center;
             backdrop-filter: blur(10px);
             border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
-        
+
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: clamp(8px, 1vw, 15px);
+            min-width: 0;
         }
-        
+
         .logo-section img {
-            height: 50px;
+            height: clamp(28px, 5.5vh, 50px);
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
-        
-        .puskesmas-name {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
+
         .clock-display {
             background: rgba(255, 255, 255, 0.2);
             color: black;
-            padding: 10px 25px;
+            padding: clamp(5px, 1vh, 10px) clamp(14px, 1.8vw, 25px);
             border-radius: 50px;
-            font-size: 1.8rem;
+            font-size: clamp(1rem, 2.6vh, 1.8rem);
             font-weight: bold;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            white-space: nowrap;
         }
-        
+
+        /* ===== MAIN LAYOUT: two stacked sections (Poli / Nurse Station) ===== */
         .main-container {
-            padding: 20px 30px;
-            height: calc(100vh - 85px);
-            overflow-y: auto;
-            display: flex;
-            gap: 20px;
-        }
-        
-        .nurse-station-section {
-            flex: 0 0 280px;
+            padding: clamp(8px, 1.5vh, 20px) clamp(14px, 2vw, 30px);
+            height: calc(100dvh - clamp(55px, 9vh, 85px));
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: clamp(6px, 1.2vh, 15px);
+            overflow: hidden;
         }
-        
-        .nurse-station-section .service-card {
-            background: linear-gradient(135deg, #4aa171 0%, #186e2b 100%);
-            min-height: 180px;
+
+        .section {
+            display: flex;
+            gap: clamp(10px, 1.4vw, 20px);
+            min-height: 0;
+            overflow: hidden;
         }
-        
-        .nurse-station-section .service-card.active {
+
+        .poli-section {
+            flex: 3;
+        }
+
+        .nurse-section {
+            flex: 2;
+            border-top: 2px solid rgba(0,0,0,0.12);
+            padding-top: clamp(6px, 1.2vh, 15px);
+        }
+
+        /* ===== LEFT: Panggilan Antrian panel (shared style, used twice) ===== */
+        .call-panel {
+            flex: 0 0 clamp(170px, 16vw, 280px);
             background: linear-gradient(135deg, #1e8a4b 0%, #094120 100%);
+            border-radius: 20px;
+            padding: clamp(8px, 1.6vh, 20px) clamp(8px, 1.2vw, 18px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            min-height: 0;
         }
-        
-        .nurse-station-section .service-name {
-            font-size: 1.7rem;
+
+        .nurse-section .call-panel {
+            background: linear-gradient(135deg, #2b6ea8 0%, #0d2e4a 100%);
         }
-        
+
+        .call-panel-label {
+            color: rgba(255,255,255,0.85);
+            font-size: clamp(0.7rem, 1.7vh, 1.1rem);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.25;
+            margin-bottom: clamp(4px, 1.2vh, 15px);
+        }
+
+        .call-panel-number {
+            color: white;
+            font-size: clamp(1.8rem, 6vh, 4rem);
+            font-weight: bold;
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.4);
+            line-height: 1;
+            margin-bottom: clamp(4px, 1vh, 12px);
+            word-break: break-word;
+        }
+
+        .call-panel-service {
+            color: white;
+            font-size: clamp(0.65rem, 1.4vh, 1.05rem);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: clamp(2px, 0.8vh, 8px);
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .call-panel-patient {
+            color: rgba(255,255,255,0.9);
+            font-size: clamp(0.6rem, 1.2vh, 0.95rem);
+            font-weight: 500;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+        }
+
+        .call-panel.flash {
+            animation: flashPanel 1.5s infinite;
+        }
+
+        @keyframes flashPanel {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); box-shadow: 0 12px 30px rgba(39, 174, 96, 0.6); }
+        }
+
+        .nurse-section .call-panel.flash {
+            animation: flashPanelBlue 1.5s infinite;
+        }
+
+        @keyframes flashPanelBlue {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); box-shadow: 0 12px 30px rgba(43, 110, 168, 0.6); }
+        }
+
+        /* ===== RIGHT: grid (shared for both Poli & Nurse Station) =====
+           grid-auto-rows: 1fr makes rows split the available height equally
+           no matter how many services/rows exist, so nothing is ever cut off. */
         .services-section {
             flex: 1;
+            min-width: 0;
+            min-height: 0;
+            overflow: hidden;
         }
-        
+
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 15vw, 260px), 1fr));
+            grid-auto-rows: 1fr;
+            gap: clamp(6px, 1vw, 15px);
+            height: 100%;
         }
-        
+
+        .nurse-services-grid {
+            grid-template-columns: repeat(auto-fit, minmax(clamp(110px, 11vw, 190px), 1fr));
+        }
+
+        /* ===== Shared service card style ===== */
         .service-card {
             background: linear-gradient(135deg, #4aa171 0%, #186e2b 100%);
-            border-radius: 15px;
-            padding: 30px;
-            min-height: 200px;
+            border-radius: clamp(8px, 1vw, 15px);
+            padding: clamp(6px, 1.4vh, 22px) clamp(8px, 1.2vw, 22px);
+            min-height: 0;
+            min-width: 0;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -114,7 +208,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .service-card::before {
             content: '';
             position: absolute;
@@ -126,104 +220,90 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         .service-card.active {
             background: linear-gradient(135deg, #1e8a4b 0%, #094120 100%);
-            transform: scale(1.05);
+            transform: scale(1.04);
             box-shadow: 0 12px 30px rgba(39, 174, 96, 0.5);
             animation: pulse 1.5s infinite;
             z-index: 10;
         }
-        
+
         .service-card.active::before {
             opacity: 1;
         }
-        
+
         .service-card.dimmed {
             opacity: 0.5;
             filter: grayscale(30%);
         }
-        
+
         @keyframes pulse {
-            0%, 100% { transform: scale(1.05); }
-            50% { transform: scale(1.08); }
+            0%, 100% { transform: scale(1.04); }
+            50% { transform: scale(1.07); }
         }
-        
+
         .service-name {
             color: white;
-            font-size: 1.7rem;
+            font-size: clamp(0.62rem, 1.7vh, 1.15rem);
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 15px;
+            margin-bottom: clamp(3px, 0.8vh, 10px);
+            line-height: 1.2;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
         .queue-name {
             color: white;
-            font-size: 1.2rem;
+            font-size: clamp(0.55rem, 1.3vh, 0.9rem);
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 15px;
+            margin-bottom: clamp(3px, 0.8vh, 10px);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
-        
+
         .queue-numbers {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+            min-width: 0;
         }
-        
+
         .current-number {
             color: white;
-            font-size: 8rem;
+            font-size: clamp(1.3rem, 4.8vh, 3.4rem);
             font-weight: bold;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
             line-height: 1;
         }
-        
-        .waiting-count {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 2rem;
-            font-weight: bold;
-            text-align: right;
+
+        /* Nurse Station cards: more compact (matches sketch's smaller boxes) */
+        .compact-card .service-name {
+            font-size: clamp(0.55rem, 1.35vh, 0.95rem);
         }
-        
-        .waiting-count small {
-            display: block;
-            font-size: 0.8rem;
-            opacity: 0.8;
+
+        .compact-card .queue-name {
+            font-size: clamp(0.5rem, 1.05vh, 0.75rem);
         }
-        
-        .no-data {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 2rem;
-        }
-        
-        /* Scrollbar styling */
-        .main-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .main-container::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .main-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-        }
-        
-        .main-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
+
+        .compact-card .current-number {
+            font-size: clamp(1.1rem, 3.4vh, 2.3rem);
         }
 
         .recall-badge {
             display: inline-block;
             background: #ff9800;
             color: white;
-            padding: 2px 8px;
+            padding: 2px 7px;
             border-radius: 12px;
-            font-size: 0.8em;
-            margin-left: 10px;
+            font-size: clamp(0.5rem, 1vh, 0.75rem);
+            margin-left: 8px;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -233,41 +313,57 @@
         <div class="logo-section">
             <img src="<?= base_url('assets/img/logotebethitam.png') ?>" style="width: 200px; height: auto;" alt="Logo Puskesmas">
             <img src="<?= base_url('assets/img/logo.png') ?>" alt="Logo SIAP">
-            <!-- <div class="puskesmas-name">Puskesmas Tebet</div> -->
         </div>
         <div class="clock-display">
             <i class="bi bi-clock"></i>
             <span id="currentTime">00:00:00</span>
         </div>
     </div>
-    
+
     <!-- Main Content -->
     <div class="main-container">
-        <!-- Nurse Station Section (Left) -->
-        <div class="nurse-station-section" id="nurseStationSection">
-            <!-- Will be populated by JavaScript -->
+        <!-- Top: Nurse Station section -->
+        <div class="section nurse-section">
+            <div class="call-panel" id="callPanelNurse">
+                <div class="call-panel-label">Nurse Station<br>Sedang Dipanggil</div>
+                <div class="call-panel-number" id="callPanelNumberNurse">-</div>
+                <div class="call-panel-service" id="callPanelServiceNurse"></div>
+                <div class="call-panel-patient" id="callPanelPatientNurse"></div>
+            </div>
+            <div class="services-section">
+                <div class="services-grid nurse-services-grid" id="nurseStationGrid">
+                    <!-- Nurse Station cards -->
+                </div>
+            </div>
         </div>
-        
-        <!-- Services Section (Right) -->
-        <div class="services-section">
-            <div class="services-grid" id="servicesGrid">
-                <!-- Will be populated by JavaScript -->
+
+        <!-- Bottom: Poli section -->
+        <div class="section poli-section">
+            <div class="call-panel" id="callPanelPoli">
+                <div class="call-panel-label">Poli<br>Sedang Dipanggil</div>
+                <div class="call-panel-number" id="callPanelNumberPoli">-</div>
+                <div class="call-panel-service" id="callPanelServicePoli"></div>
+                <div class="call-panel-patient" id="callPanelPatientPoli"></div>
+            </div>
+            <div class="services-section">
+                <div class="services-grid" id="servicesGrid">
+                    <!-- Poli cards -->
+                </div>
             </div>
         </div>
     </div>
-    
+
     <!-- Audio element for notification sound -->
     <audio id="callSound" preload="auto">
         <source src="<?= base_url('assets/sounds/ding2.wav') ?>" type="audio/mpeg">
     </audio>
-    
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         const BASE_URL = '<?= base_url() ?>';
         const LANTAI = '<?= $lantai ?>';
         let serviceStates = {}; // Track state for each service
         let lastWarningTimes = {}; // Track warning time per service
-        let currentActiveService = null; // Track currently active service
         let lastCallTime = {}; // Track when each service was last called
 
         // Speech & Highlight Queue System
@@ -280,21 +376,21 @@
             let nurseStationHtml = '';
             let servicesHtml = '';
             let newCalls = []; // Track all new calls in this render cycle
-            
+
             // First pass: Detect ALL new queue calls
             services.forEach(service => {
                 const kode = service.kode_antrian;
                 const current = service.current_queue;
                 const oldState = serviceStates[kode] || {};
-                
+
                 if (current) {
                     const newQueueId = current.id;
                     const isWarning = current.is_warning;
                     const callCount = current.call_count || 0;
-                    
+
                     let isNewCall = false;
                     let callPriority = 0;
-                    
+
                     // Check warning trigger (highest priority)
                     if (isWarning && isWarning !== lastWarningTimes[kode]) {
                         isNewCall = true;
@@ -302,12 +398,12 @@
                         lastWarningTimes[kode] = isWarning;
                     }
                     // Check if queue changed OR recall
-                    else if (!oldState.isFirstLoad && 
+                    else if (!oldState.isFirstLoad &&
                             (oldState.queueId !== newQueueId || oldState.callCount !== callCount)) {
                         isNewCall = true;
                         callPriority = 2;
                     }
-                    
+
                     // Add to new calls array
                     if (isNewCall) {
                         const timestamp = Date.now();
@@ -320,7 +416,7 @@
                         });
                         lastCallTime[kode] = timestamp;
                     }
-                    
+
                     // Update state
                     serviceStates[kode] = {
                         queueId: newQueueId,
@@ -335,7 +431,7 @@
                     };
                 }
             });
-            
+
             // Process new calls if any
             if (newCalls.length > 0) {
                 // Sort by priority then timestamp
@@ -343,32 +439,33 @@
                     if (a.priority !== b.priority) return a.priority - b.priority;
                     return a.timestamp - b.timestamp;
                 });
-                
+
                 console.log('🔔 New calls detected:', newCalls.length);
-                
+
                 // Add to call queue
                 newCalls.forEach(call => {
                     callQueue.push({
                         kode: call.kode,
                         fullNumber: call.current.full_number,
+                        nomorAntrian: call.current.nomor_antrian,
                         pelayanan: call.service.nama_pelayanan,
                         namaPasien: call.current.nama_pasien || '',
                         callCount: call.current.call_count || 0
                     });
                 });
-                
+
                 // Start processing if not already processing
                 if (!isProcessingQueue) {
                     processCallQueue();
                 }
             }
-            
-            // Second pass: Render cards
+
+            // Second pass: Render cards - split into Nurse Station (bottom section) vs Poli (top section)
             services.forEach(service => {
                 const kode = service.kode_antrian;
                 const current = service.current_queue;
-                const waitingCount = service.waiting_count || 0;
-                
+                const isNurse = service.nama_pelayanan.toLowerCase().includes('nurse station');
+
                 const displayNumber = current ? String(current.nomor_antrian).padStart(4, '0') : '-';
                 const displayName = current ? current.nama_pasien : '';
                 const callCount = current ? (current.call_count || 0) : 0;
@@ -378,10 +475,11 @@
                 const isActive = (currentActiveCard === kode);
                 const activeClass = isActive ? 'active' : '';
                 const dimmedClass = (currentActiveCard !== null && !isActive) ? 'dimmed' : '';
-                
+                const compactClass = isNurse ? 'compact-card' : '';
+
                 const cardHtml = `
-                ${service.nama_pelayanan.toLowerCase().includes('lansia') ? `<div class="service-card ${activeClass} ${dimmedClass}" style="background: linear-gradient(135deg, #667eea 0%, #c1a1e0 100%);" data-service-code="${kode}">` : `<div class="service-card ${activeClass} ${dimmedClass}" data-service-code="${kode}">`}
-                
+                ${service.nama_pelayanan.toLowerCase().includes('nurse station') ? `<div class="service-card ${compactClass} ${activeClass} ${dimmedClass}" style="background: linear-gradient(135deg, #2b6ea8 0%, #0d2e4a 100%);" data-service-code="${kode}">` : `<div class="service-card ${compactClass} ${activeClass} ${dimmedClass}" data-service-code="${kode}">`}
+
                     <div class="service-name">${service.nama_pelayanan.toUpperCase()}</div>
                     <div class="queue-name">${displayName}</div>
                     <div class="queue-numbers">
@@ -390,24 +488,23 @@
                         </div>
                     </div>
                 `;
-                
-                // Separate Nurse Station and regular services
-                if (service.nama_pelayanan.toLowerCase().includes('nurse station')) {
+
+                if (isNurse) {
                     nurseStationHtml += cardHtml;
                 } else {
                     servicesHtml += cardHtml;
                 }
             });
-            
+
             if (nurseStationHtml === '') {
-                nurseStationHtml = '<div class="text-center text-white fs-6 mt-3">Tidak ada Nurse Station</div>';
+                nurseStationHtml = '<div class="text-center text-muted fs-6">Tidak ada Nurse Station</div>';
             }
-            
+
             if (servicesHtml === '') {
-                servicesHtml = '<div class="text-center text-white fs-3 mt-5">Tidak ada layanan</div>';
+                servicesHtml = '<div class="text-center text-muted fs-6">Tidak ada layanan</div>';
             }
-            
-            $('#nurseStationSection').html(nurseStationHtml);
+
+            $('#nurseStationGrid').html(nurseStationHtml);
             $('#servicesGrid').html(servicesHtml);
         }
 
@@ -426,19 +523,23 @@
                 }, 5000);
                 return;
             }
-            
+
             isProcessingQueue = true;
             const call = callQueue.shift();
-            
+
             console.log('📢 Processing call:', call.pelayanan, call.fullNumber);
             console.log('   Remaining in queue:', callQueue.length);
-            
+
             // CRITICAL FIX: Set current active card dan update highlight
             currentActiveCard = call.kode;
-            // Step 1: Highlight the card FIRST
+
+            // Step 1: Update the correct "Panggilan Antrian" panel (Poli or Nurse Station)
+            updateCallPanel(call);
+
+            // Step 2: Highlight the card
             highlightCard(call.kode);
-            
-            // Step 2: Then play the speech
+
+            // Step 3: Then play the speech
             // Speech akan auto-trigger next call via callback
             speakQueueWithCallback(
                 call.fullNumber,
@@ -448,7 +549,7 @@
                 () => {
                     // Callback dipanggil ketika speech BENAR-BENAR selesai
                     console.log('✓ Speech completed for:', call.pelayanan);
-                    
+
                     // Small delay before next call untuk breathing room
                     setTimeout(() => {
                         processCallQueue(); // Process next in queue
@@ -457,16 +558,33 @@
             );
         }
 
+        // NEW: Update the correct big "Panggilan Antrian" panel (Poli vs Nurse Station) with the latest call
+        function updateCallPanel(call) {
+            const isNurse = call.pelayanan.toLowerCase().includes('nurse station');
+            const suffix = isNurse ? 'Nurse' : 'Poli';
+            const panelId = isNurse ? 'callPanelNurse' : 'callPanelPoli';
+
+            const panel = document.getElementById(panelId);
+            $('#callPanelNumber' + suffix).text(call.nomorAntrian.toString().padStart(4, '0'));
+            $('#callPanelService' + suffix).text(call.pelayanan.toUpperCase());
+            $('#callPanelPatient' + suffix).text(call.namaPasien || '');
+
+            // Small flash animation to draw attention
+            panel.classList.remove('flash');
+            void panel.offsetWidth; // force reflow so animation can restart
+            panel.classList.add('flash');
+        }
+
         // NEW: Highlight specific card
         function highlightCard(kode) {
             console.log('🎯 Highlighting card:', kode);
-            
+
             const allCards = document.querySelectorAll('.service-card');
             let cardFound = false;
-            
+
             allCards.forEach(card => {
                 const cardKode = card.getAttribute('data-service-code');
-                
+
                 if (cardKode === kode) {
                     card.classList.add('active');
                     card.classList.remove('dimmed');
@@ -477,7 +595,7 @@
                     card.classList.add('dimmed');
                 }
             });
-            
+
             if (!cardFound) {
                 console.warn('   ⚠️ Card not found for kode:', kode);
             }
@@ -496,20 +614,20 @@
         function speakQueueWithCallback(fullNumber, pelayanan, namaPasien, kode, onComplete) {
             // Cancel any ongoing speech
             window.speechSynthesis.cancel();
-            
+
             // Play sound effect
             const audio = document.getElementById('callSound');
             if (audio) {
                 audio.play().catch(e => console.warn('Audio play failed:', e));
             }
-            
+
             // Wait for sound effect, then start speech
             setTimeout(() => {
                 const utterance = new SpeechSynthesisUtterance();
                 const match = fullNumber.match(/^([A-Z]+)(\d+)$/);
-                
+
                 let text = 'Nomor antrian ';
-                
+
                 if (match) {
                     const numbers = match[2];
                     const numberInt = parseInt(numbers, 10);
@@ -518,27 +636,27 @@
                     const numberInt = parseInt(fullNumber.replace(/[A-Z]/g, ''), 10);
                     text += numberToIndonesian(numberInt);
                 }
-                
+
                 if (pelayanan.toLowerCase().includes('nurse station')) {
                     text += ' di ' + formatTextForSpeech(pelayanan).replace('Nurse', 'Nurs');
                 } else {
-                    text += ' di Ruang ' + formatTextForSpeech(pelayanan);
+                    text += ' di Ruang ' + formatTextForSpeech(pelayanan).replace('R.', '').trim();;
                 }
-                
+
                 if (namaPasien && namaPasien.trim() !== '') {
                     text += '. Atas nama ' + formatTextForSpeech(namaPasien);
                 }
-                
+
                 utterance.text = text;
                 utterance.lang = 'id-ID';
                 utterance.rate = 0.7;
                 utterance.pitch = 1;
                 utterance.volume = 1;
-                
+
                 console.log('🔊 Speaking:', text);
-                
+
                 let callbackFired = false;
-                
+
                 // Primary: onend event
                 utterance.onend = () => {
                     if (!callbackFired) {
@@ -547,7 +665,7 @@
                         if (onComplete) onComplete();
                     }
                 };
-                
+
                 // Fallback: onerror event
                 utterance.onerror = (event) => {
                     if (!callbackFired) {
@@ -556,12 +674,12 @@
                         if (onComplete) onComplete();
                     }
                 };
-                
+
                 // Safety: Timeout based on text length
                 // Rumus: (jumlah kata * 600ms per kata) + buffer 2 detik
                 const wordCount = text.split(' ').length;
                 const estimatedDuration = (wordCount * 600) + 2000;
-                
+
                 setTimeout(() => {
                     if (!callbackFired) {
                         callbackFired = true;
@@ -569,10 +687,10 @@
                         if (onComplete) onComplete();
                     }
                 }, estimatedDuration);
-                
+
                 // Start speaking
                 window.speechSynthesis.speak(utterance);
-                
+
             }, 500); // Delay after sound effect
         }
 
@@ -580,15 +698,15 @@
         function speakQueue(fullNumber, pelayanan, namaPasien = '') {
             speakQueueWithCallback(fullNumber, pelayanan, namaPasien, null, null);
         }
-        
+
         // Convert number to Indonesian words
         function numberToIndonesian(num) {
             if (num === 0) return 'nol';
-            
+
             const ones = ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan'];
-            const teens = ['sepuluh', 'sebelas', 'dua belas', 'tiga belas', 'empat belas', 'lima belas', 
+            const teens = ['sepuluh', 'sebelas', 'dua belas', 'tiga belas', 'empat belas', 'lima belas',
                            'enam belas', 'tujuh belas', 'delapan belas', 'sembilan belas'];
-            
+
             if (num < 10) {
                 return ones[num];
             } else if (num >= 10 && num < 20) {
@@ -612,7 +730,7 @@
                 const remainder = num % 1000;
                 return numberToIndonesian(thousands) + ' ribu' + (remainder > 0 ? ' ' + numberToIndonesian(remainder) : '');
             }
-            
+
             return num.toString();
         }
 
@@ -624,7 +742,7 @@
                 .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(' ');
         }
-        
+
         // Update clock
         function updateClock() {
             const now = new Date();
@@ -633,7 +751,7 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             $('#currentTime').text(`${hours}.${minutes}.${seconds}`);
         }
-        
+
         // Update display
         function updateDisplay() {
             $.ajax({
@@ -642,8 +760,6 @@
                 dataType: 'json',
                 cache: false,
                 success: function(response) {
-                    // console.log('Display update:', response);
-                    
                     if (response.success) {
                         renderServices(response.services);
                     }
@@ -653,12 +769,12 @@
                 }
             });
         }
-        
+
         // Initialize
         $(document).ready(function() {
             updateClock();
             setInterval(updateClock, 1000);
-            
+
             updateDisplay();
             setInterval(updateDisplay, 5000);
         });
