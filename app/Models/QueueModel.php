@@ -304,8 +304,18 @@ class QueueModel extends Model
             ];
         }
 
+        $this->where([
+            'kode_antrian'  => $queue['kode_antrian'],
+            'lantai'        => $queue['lantai'],
+            'tanggal'       => $queue['tanggal'],
+            'status'        => 'calling'
+        ])->set([
+            'status' => 'called'
+        ])->update();
+
         // Set warning flag with timestamp
         $this->update($queueId, [
+            'status'        => 'calling',
             'is_warning' => time()
         ]);
 
