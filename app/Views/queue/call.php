@@ -110,7 +110,7 @@
                         <th style="width: 120px;">Status</th>
                         <th style="width: 200px;">Dipanggil Oleh</th>
                         <th style="width: 250px;">Panggilan</th>
-                        <th style="width: 250px;">Kirim Obat</th>
+                        <!-- <th style="width: 250px;">Kirim Obat</th> -->
                     </tr>
                 </thead>
                 <tbody id="queueTableBody">
@@ -326,9 +326,9 @@ function renderTable() {
                     <td>${getStatusBadge(queue.status)}</td>
                     <td>${queue.petugas_nama || '-'}</td>
                     <td>${getActionButtons(queue)}</td>
-                    <td>${getActionButtonsFarmasi(queue)}</td>
                     </tr>
                     `;
+                    // <td>${getActionButtonsFarmasi(queue)}</td>
                 });
                 // <td>${queue.waktu_masuk ? new Date(queue.waktu_masuk).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) : '-'}</td>
     }
