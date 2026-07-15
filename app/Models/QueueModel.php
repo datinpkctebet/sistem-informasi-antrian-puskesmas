@@ -133,17 +133,16 @@ class QueueModel extends Model
     public function getWaitingByLantai($lantai, $tanggal = null)
     {
         $tanggal = $tanggal ?? date('Y-m-d');
-
-        return $this->select('queue.*, services.nama_pelayanan')
-                    ->join('services', 'services.kode_antrian = queue.kode_antrian')
-                    ->where([
-                        'queue.lantai'  => $lantai,
-                        'queue.tanggal' => $tanggal,
-                        'queue.status'  => 'waiting'
-                    ])
-                    ->orderBy('queue.kode_antrian', 'ASC')
-                    ->orderBy('queue.nomor_antrian', 'ASC')
-                    ->findAll();
+        $cacheKey = 'waiting_' . $lantai . '_' . $tanggal;
+        
+        if ($cached = cache()->get($cacheKey)) {
+            return $cached;
+        }
+        
+        $result = $this->where(['lantai' => $lantai, 'tanggal' => $tanggal, 'status' => 'waiting'])->findAll();
+        cache()->save($cacheKey, $result, 10); // Cache 10 detik
+        
+        return $result;
     }
 
     public function getCurrentCalling($lantai, $tanggal = null)

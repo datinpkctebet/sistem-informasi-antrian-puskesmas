@@ -948,6 +948,11 @@
         let callQueue = []; 
         let isProcessingQueue = false;
         let currentActiveCard = null;
+        let displayCache = {
+            data: null,
+            timestamp: 0,
+            ttl: 10000 // 10 detik
+        };
 
         // Extract group name from service name
         function getGroupName(serviceName) {
@@ -1343,6 +1348,14 @@
         }
         
         function updateDisplay() {
+            const now = Date.now();
+            
+            // Cek cache dulu
+            if (displayCache.data && (now - displayCache.timestamp) < displayCache.ttl) {
+                renderServices(displayCache.data); // Gunakan cache
+                return;
+            }
+
             $.ajax({
                 url: BASE_URL + 'api/queue/by-services/' + LANTAI,
                 method: 'GET',
@@ -1350,6 +1363,10 @@
                 cache: false,
                 success: function(response) {
                     if (response.success) {
+                        // Simpan ke cache
+                        displayCache.data = response.services;
+                        displayCache.timestamp = now;
+                        
                         renderServices(response.services);
                     }
                 },
