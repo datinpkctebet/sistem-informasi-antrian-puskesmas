@@ -93,3 +93,8 @@ $routes->group('api', function($routes) {
     $routes->post('farmasi/call-next', 'FarmasiController::callNext');
     $routes->post('farmasi/finish', 'FarmasiController::finish');
 });
+
+$routes->group('pendaftaranKiosk', function ($routes) {
+    $routes->get('/', 'PendaftaranKioskController::index');
+    $routes->post('ambil-antrian', 'PendaftaranKioskController::ambilAntrian');
+});
