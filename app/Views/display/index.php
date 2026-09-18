@@ -753,7 +753,7 @@
 
         .queue-name {
             color: white;
-            font-size: clamp(0.7rem, 1.6vw, 1.2rem);
+            font-size: clamp(0.75rem, 2vw, 1.3rem);
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: clamp(5px, 1vh, 12px);
@@ -761,6 +761,9 @@
             line-height: 1.1;
             word-break: break-word;
             min-height: 1.2em;
+            text-align: right;
+            width: 100%;
+            display: block;
         }
 
         .queue-numbers {
@@ -772,7 +775,7 @@
 
         .current-number {
             color: white;
-            font-size: clamp(1.8rem, 7.5vw, 3.5rem);
+            font-size: clamp(2rem, 9vw, 4.5rem);
             font-weight: bold;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
             line-height: 1;
@@ -1043,7 +1046,7 @@
             
             // Group services by category
             const grouped = {};
-            const groupOrder = ['LANSIA', 'PTM', 'DEWASA', 'LAINNYA'];
+            const groupOrder = ['DEWASA', 'PTM', 'LANSIA', 'LAINNYA'];
             
             groupOrder.forEach(group => {
                 grouped[group] = {
@@ -1100,11 +1103,11 @@
                     html += `
                     <div class="service-card nurse-station ${activeClass} ${dimmedClass} ${lansiClass} ${ptmClass}" data-service-code="${kode}">
                         <div class="service-name">${card.nama_pelayanan.toUpperCase()}</div>
-                        <div class="queue-name">${displayName}</div>
                         <div class="queue-numbers">
                             <div class="current-number">${displayNumber}</div>
                             ${callBadge}
                         </div>
+                        <div class="queue-name">${displayName}</div>
                     </div>
                     `;
                 }
@@ -1127,11 +1130,11 @@
                     html += `
                     <div class="service-card ${activeClass} ${dimmedClass} ${lansiClass} ${ptmClass}" data-service-code="${kode}">
                         <div class="service-name">${card.nama_pelayanan.toUpperCase()}</div>
-                        <div class="queue-name">${displayName}</div>
                         <div class="queue-numbers">
                             <div class="current-number">${displayNumber}</div>
                             ${callBadge}
                         </div>
+                        <div class="queue-name">${displayName}</div>
                     </div>
                     `;
                 });
