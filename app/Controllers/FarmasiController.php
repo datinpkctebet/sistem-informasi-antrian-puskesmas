@@ -35,30 +35,36 @@ class FarmasiController extends BaseController
 
         // Get queues by status
         $penyiapanObat = $this->queueModel
+            ->select('queue.*, services.nama_pelayanan')
+            ->join('services', 'LEFT(queue.full_number, 1) = services.kode_antrian', 'left')
             ->where([
-                'lantai' => $farmasi_lantai,
+                'queue.lantai' => $farmasi_lantai,
                 'status' => 'farmasi_preparing',
                 'tanggal' => $tanggal
             ])
-            ->orderBy('nomor_antrian', 'ASC')
+            ->orderBy('queue.id', 'ASC')
             ->findAll();
 
         $penyerahanObat = $this->queueModel
+            ->select('queue.*, services.nama_pelayanan')
+            ->join('services', 'LEFT(queue.full_number, 1) = services.kode_antrian', 'left')
             ->where([
-                'lantai' => $farmasi_lantai,
+                'queue.lantai' => $farmasi_lantai,
                 'status' => 'farmasi_serving',
                 'tanggal' => $tanggal
             ])
-            ->orderBy('nomor_antrian', 'ASC')
+            ->orderBy('queue.id', 'ASC')
             ->findAll();
 
         $obatDiambil = $this->queueModel
+            ->select('queue.*, services.nama_pelayanan')
+            ->join('services', 'LEFT(queue.full_number, 1) = services.kode_antrian', 'left')
             ->where([
-                'lantai' => $farmasi_lantai,
+                'queue.lantai' => $farmasi_lantai,
                 'status' => 'farmasi_completed',
                 'tanggal' => $tanggal
             ])
-            ->orderBy('nomor_antrian', 'ASC')
+            ->orderBy('queue.id', 'ASC')
             ->findAll();
 
         return $this->response->setJSON([
@@ -71,7 +77,7 @@ class FarmasiController extends BaseController
         ]);
     }
 
-    // API: Panggil obat (update waiting → calling)
+    // API: Panggil obat (update farmasi_preparing → farmasi_serving)
     public function callNext()
     {
         $queueId = $this->request->getPost('queue_id');
@@ -85,16 +91,16 @@ class FarmasiController extends BaseController
 
         $queue = $this->queueModel->find($queueId);
 
-        if (!$queue || $queue['status'] !== 'waiting') {
+        if (!$queue || $queue['status'] !== 'farmasi_preparing') {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Antrian tidak valid atau sudah dipanggil'
             ]);
         }
 
-        // Update queue status from waiting to calling
+        // Update queue status from farmasi_preparing to farmasi_serving
         $updated = $this->queueModel->update($queueId, [
-            'status' => 'calling',
+            'status' => 'farmasi_serving',
             'waktu_panggil' => date('Y-m-d H:i:s')
         ]);
 
@@ -112,7 +118,7 @@ class FarmasiController extends BaseController
         ]);
     }
 
-    // API: Selesai obat (update calling → done)
+    // API: Selesai obat (update farmasi_serving → farmasi_completed)
     public function finish()
     {
         $queueId = $this->request->getPost('queue_id');
@@ -126,16 +132,16 @@ class FarmasiController extends BaseController
 
         $queue = $this->queueModel->find($queueId);
 
-        if (!$queue || $queue['status'] !== 'calling') {
+        if (!$queue || $queue['status'] !== 'farmasi_serving') {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Antrian tidak dalam status penyerahan obat'
             ]);
         }
 
-        // Update queue status from calling to done
+        // Update queue status from farmasi_serving to farmasi_completed
         $updated = $this->queueModel->update($queueId, [
-            'status' => 'done',
+            'status' => 'farmasi_completed',
             'waktu_selesai' => date('Y-m-d H:i:s')
         ]);
 

@@ -314,12 +314,14 @@
                 </div>`;
             } else {
                 items.forEach(item => {
+                    // console.log(`Rendering ${type} queue item:`, item);
                     const queueNumber = String(item.nomor_antrian).padStart(4, '0');
                     const patientName = item.nama_pasien || '-';
                     const isHighlight = (item.id === highlightId && type === 'serving');
                     const highlightClass = isHighlight ? 'highlight' : '';
                     
                     html += `<div class="queue-item ${type} ${highlightClass}">
+                        <div class="service-name">${item.nama_pelayanan}</div>
                         <div class="queue-number">${queueNumber}</div>
                         <div class="queue-patient">${patientName}</div>
                     </div>`;

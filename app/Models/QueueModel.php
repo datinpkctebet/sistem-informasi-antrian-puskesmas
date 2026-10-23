@@ -488,14 +488,28 @@ class QueueModel extends Model
 
         // Create new queue di farmasi dengan status waiting
         $farmasiQueue = [
-            'kode_antrian' => 'FARMASI_' . $originalQueue['kode_antrian'],
+            'kode_antrian' => 'PC',
             'nomor_antrian' => $originalQueue['nomor_antrian'],
             'full_number' => $originalQueue['full_number'],
             'nama_pasien' => $originalQueue['nama_pasien'],
             'lantai' => 'farmasi',
-            'status' => 'waiting',
+            'status' => 'farmasi_preparing',
             'tanggal' => $originalQueue['tanggal']
         ];
+
+        // Check if already exists
+        $exists = $this->where([
+            'kode_antrian'  => 'PC',
+            'nomor_antrian' => $originalQueue['nomor_antrian'],
+            'tanggal'       => $originalQueue['tanggal']
+        ])->first();
+
+        if ($exists) {
+            return [
+                'success' => false,
+                'message' => 'Antrian farmasi sudah ada'
+            ];
+        }
 
         if ($this->insert($farmasiQueue)) {
             return [

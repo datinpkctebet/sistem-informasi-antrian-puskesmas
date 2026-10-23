@@ -179,42 +179,6 @@
     </div>
 </div>
 
-<!-- Table Section -->
-<div class="card shadow">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover" id="queueTable">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 50px;">No</th>
-                        <th style="width: 120px;">Nomor Antrian</th>
-                        <th style="width: 250px;">Nama</th>
-                        <th style="width: 150px;">Poli</th>
-                        <th style="width: 120px;">Status</th>
-                        <th style="width: 200px;">Dipanggil Oleh</th>
-                        <th style="width: 250px;">Panggilan</th>
-                    </tr>
-                </thead>
-                <tbody id="queueTableBody">
-                    <!-- Will be populated by JavaScript -->
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Pagination -->
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <div>
-                <small class="text-muted">Menampilkan <span id="showingInfo">0</span> data</small>
-            </div>
-            <nav>
-                <ul class="pagination mb-0" id="pagination">
-                    <!-- Will be populated by JavaScript -->
-                </ul>
-            </nav>
-        </div>
-    </div>
-</div>
-
 <!-- Status Columns -->
 <div class="column-container">
     <!-- Penyiapan Obat -->
@@ -264,39 +228,11 @@
 
 <?= $this->section('scripts') ?>
 <script>
-const BASE_URL = '<?= base_url() ?>';
 let farmasiQueues = {
     penyiapan_obat: [],
     penyerahan_obat: [],
     obat_diambil: []
 };
-
-// Load queues
-function loadQueues() {
-    const tanggal = $('#filterTanggal').val() || '<?= date('Y-m-d') ?>';
-    const pelayanan = $('#filterPelayanan').val();
-    const status = $('#filterStatus').val();
-    
-    $.ajax({
-        url: BASE_URL + 'api/queue/list',
-        method: 'GET',
-        data: {
-            tanggal: tanggal,
-            pelayanan: pelayanan,
-            status: status
-        },
-        dataType: 'json',
-        success: function(response) {
-            if (response.success) {
-                allQueues = response.data;
-                renderTable();
-            }
-        },
-        error: function() {
-            Swal.fire('Error', 'Gagal memuat data antrian', 'error');
-        }
-    });
-}
 
 // Load farmasi queues
 function loadQueues() {
@@ -360,6 +296,7 @@ function renderQueueColumn(elementId, queues, status, actionType) {
 
             html += `<div class="queue-row ${status}">
                 <div class="queue-info">
+                    <div class="queue-service">${queue.nama_pelayanan}</div>
                     <div class="queue-number">${queueNumber}</div>
                     <div class="queue-patient">${patientName}</div>
                 </div>
